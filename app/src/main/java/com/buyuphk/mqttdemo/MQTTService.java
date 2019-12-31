@@ -47,6 +47,8 @@ public class MQTTService extends Service {
         public void connectionLost(Throwable cause) {
             Log.w(TAG, "失去连接");
             cause.printStackTrace();
+            Log.d(TAG, "失去连接，开始重连");
+            doClientConnection();
         }
 
         @Override
@@ -86,6 +88,8 @@ public class MQTTService extends Service {
             Log.e(TAG, "MQTT客服端和Broker(代理服务器)连接失败，失败原因：" + arg1.getMessage());
             arg1.printStackTrace();
             // 连接失败，重连
+            Log.d("debug", "连接异常，开始重连");
+            doClientConnection();
         }
     };
 
@@ -188,7 +192,7 @@ public class MQTTService extends Service {
      * 连接MQTT服务器
      */
     private void doClientConnection() {
-        if (!mqttAndroidClient.isConnected() && isConnectIsNormal()) {
+        if (!mqttAndroidClient.isConnected()) {
             try {
                 Log.e(getClass().getName(), "MQTT客服端开始和Broker(代理服务器建立连接)");
                 mqttAndroidClient.connect(mqttConnectOptions, null, iMqttActionListener);
